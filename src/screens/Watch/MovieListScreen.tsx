@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -21,21 +21,22 @@ const MovieListScreen = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const loadMovies = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await fetchUpcomingMovies();
-        setMovies(data);
-      } catch (err: any) {
-        setError("Failed to load movies. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadMovies();
+  const loadMovies = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await fetchUpcomingMovies();
+      setMovies(data);
+    } catch (err: any) {
+      setError("Failed to load movies. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    loadMovies();
+  }, [loadMovies]);
 
   const filteredMovies = search
     ? movies.filter((movie) =>
@@ -78,11 +79,32 @@ const MovieListScreen = () => {
           style={{ marginTop: 40 }}
         />
       ) : error ? (
-        <Text
-          style={{ color: COLORS.pink, textAlign: "center", marginTop: 40 }}
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-          {error}
-        </Text>
+          <TouchableOpacity onPress={loadMovies} activeOpacity={0.7}>
+            <Text
+              style={{
+                color: COLORS.pink,
+                textAlign: "center",
+                fontFamily: FONTS.medium,
+                fontSize: 16,
+              }}
+            >
+              {error}
+            </Text>
+            <Text
+              style={{
+                color: COLORS.skyBlue,
+                textAlign: "center",
+                marginTop: 8,
+                fontFamily: FONTS.medium,
+              }}
+            >
+              Tap to retry
+            </Text>
+          </TouchableOpacity>
+        </View>
       ) : (
         <FlatList
           data={filteredMovies}
