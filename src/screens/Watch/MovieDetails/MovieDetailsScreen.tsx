@@ -1,20 +1,172 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  ImageBackground,
+  ScrollView,
+  ActivityIndicator,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { WatchStackParamList } from "@navigation/stacks/WatchStackNavigator";
+import {
+  fetchMovieDetails,
+  fetchMovieImages,
+  MovieDetails,
+  MovieImagesResponse,
+} from "@services/movies";
+import COLORS from "@constants/colors";
+import FONTS from "@constants/fonts";
+import styles from "./style";
+
+const { width } = Dimensions.get("window");
+
+type MovieDetailsRouteProp = RouteProp<WatchStackParamList, "MovieDetails">;
 
 const MovieDetailsScreen = () => {
+  const navigation = useNavigation();
+  const route = useRoute<MovieDetailsRouteProp>();
+  const { movieId } = route.params;
+
+  const [details, setDetails] = useState<MovieDetails | null>(null);
+  const [images, setImages] = useState<MovieImagesResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const [detailsData, imagesData] = await Promise.all([
+          fetchMovieDetails(movieId),
+          fetchMovieImages(movieId),
+        ]);
+        setDetails(detailsData);
+        setImages(imagesData);
+      } catch (err) {
+        setError("Failed to load movie details. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [movieId]);
+
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color={COLORS.darkPurple} />
+      </View>
+    );
+  }
+
+  if (error || !details) {
+    return (
+      <View style={styles.centered}>
+        <Text style={{ color: COLORS.pink, fontFamily: FONTS.medium }}>
+          {error || "No details found."}
+        </Text>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{ marginTop: 16 }}
+        >
+          <Text style={{ color: COLORS.skyBlue, fontFamily: FONTS.medium }}>
+            Go Back
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  const backdropUrl = details.backdrop_path
+    ? `https://image.tmdb.org/t/p/w780${details.backdrop_path}`
+    : undefined;
+
   return (
-    <View style={styles.container}>
-      <Text>Movie Details Screen</Text>
-    </View>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ paddingBottom: 32 }}
+    >
+      {/* Backdrop and header */}
+      <ImageBackground
+        source={backdropUrl ? { uri: backdropUrl } : undefined}
+        style={styles.backdrop}
+        imageStyle={{ borderBottomLeftRadius: 32, borderBottomRightRadius: 32 }}
+      >
+        <View style={styles.headerRow}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}
+          >
+            <Ionicons name="arrow-back" size={28} color={COLORS.white} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Watch</Text>
+        </View>
+        <View style={styles.backdropOverlay} />
+        <View style={styles.backdropContent}>
+          <Text style={styles.movieTitle}>{details.title}</Text>
+          <Text style={styles.releaseDate}>
+            In Theaters {details.release_date}
+          </Text>
+          {/* Buttons */}
+          <TouchableOpacity style={styles.ticketsBtn}>
+            <Text style={styles.ticketsBtnText}>Get Tickets</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.trailerBtn}>
+            <Ionicons
+              name="play"
+              size={20}
+              color={COLORS.white}
+              style={{ marginRight: 8 }}
+            />
+            <Text style={styles.trailerBtnText}>Watch Trailer</Text>
+          </TouchableOpacity>
+        </View>
+      </ImageBackground>
+
+      {/* Genres */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Genres</Text>
+        <View style={styles.genresRow}>
+          {details.genres.map((genre) => (
+            <View
+              key={genre.id}
+              style={[
+                styles.genrePill,
+                { backgroundColor: genreColor(genre.name) },
+              ]}
+            >
+              <Text style={styles.genreText}>{genre.name}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
+
+      {/* Overview */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Overview</Text>
+        <Text style={styles.overview}>{details.overview}</Text>
+      </View>
+    </ScrollView>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+function genreColor(name: string) {
+  switch (name.toLowerCase()) {
+    case "action":
+      return COLORS.teal;
+    case "thriller":
+      return COLORS.pink;
+    case "science":
+      return COLORS.purple;
+    case "fiction":
+      return COLORS.gold;
+    default:
+      return COLORS.gray;
+  }
+}
 
 export default MovieDetailsScreen;
