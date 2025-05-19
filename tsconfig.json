@@ -9,7 +9,8 @@
       "@navigation/*": ["src/navigation/*"],
       "@constants/*": ["src/constants/*"],
       "@assets/*": ["assets/*"],
-      "@stacks/*": ["src/stacks/*"]
+      "@stacks/*": ["src/stacks/*"],
+      "@services/*": ["src/services/*"]
     }
   }
 }

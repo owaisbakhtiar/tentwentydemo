@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,33 +6,42 @@ import {
   ImageBackground,
   TextInput,
   TouchableOpacity,
+  ActivityIndicator,
   Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./style";
 import COLORS from "@constants/colors";
 import FONTS from "@constants/fonts";
-
-const DUMMY_MOVIES = [
-  {
-    id: "1",
-    title: "Free Guy",
-    image: "https://image.tmdb.org/t/p/w500/xmbU4JTUm8rsdtn7Y3Fcm30GpeT.jpg",
-  },
-  {
-    id: "2",
-    title: "The King's Man",
-    image: "https://image.tmdb.org/t/p/w500/aq4Pwv5Xeuvj6HZKtxyd23e6bE9.jpg",
-  },
-  {
-    id: "3",
-    title: "Jojo Rabbit",
-    image: "https://image.tmdb.org/t/p/w500/7GsM4mtM0worCtIVeiQt28HieeN.jpg",
-  },
-];
+import { fetchUpcomingMovies, Movie } from "@services/movies";
 
 const MovieListScreen = () => {
   const [search, setSearch] = useState("");
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadMovies = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await fetchUpcomingMovies();
+        setMovies(data);
+      } catch (err: any) {
+        setError("Failed to load movies. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadMovies();
+  }, []);
+
+  const filteredMovies = search
+    ? movies.filter((movie) =>
+        movie.title.toLowerCase().includes(search.toLowerCase())
+      )
+    : movies;
 
   return (
     <View style={styles.container}>
@@ -61,26 +70,42 @@ const MovieListScreen = () => {
         />
       </View>
 
-      {/* Movie List */}
-      <FlatList
-        data={DUMMY_MOVIES}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ paddingVertical: 16 }}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <View style={styles.cardWrapper}>
-            <ImageBackground
-              source={{ uri: item.image }}
-              style={styles.cardImage}
-              imageStyle={styles.cardImageStyle}
-            >
-              <View style={styles.cardOverlay} />
-              <Text style={styles.cardTitle}>{item.title}</Text>
-            </ImageBackground>
-          </View>
-        )}
-        ItemSeparatorComponent={() => <View style={{ height: 24 }} />}
-      />
+      {/* Loading/Error State */}
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color={COLORS.darkPurple}
+          style={{ marginTop: 40 }}
+        />
+      ) : error ? (
+        <Text
+          style={{ color: COLORS.pink, textAlign: "center", marginTop: 40 }}
+        >
+          {error}
+        </Text>
+      ) : (
+        <FlatList
+          data={filteredMovies}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={{ paddingVertical: 16 }}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <View style={styles.cardWrapper}>
+              <ImageBackground
+                source={{
+                  uri: `https://image.tmdb.org/t/p/w500${item.backdrop_path}`,
+                }}
+                style={styles.cardImage}
+                imageStyle={styles.cardImageStyle}
+              >
+                <View style={styles.cardOverlay} />
+                <Text style={styles.cardTitle}>{item.title}</Text>
+              </ImageBackground>
+            </View>
+          )}
+          ItemSeparatorComponent={() => <View style={{ height: 24 }} />}
+        />
+      )}
     </View>
   );
 };
