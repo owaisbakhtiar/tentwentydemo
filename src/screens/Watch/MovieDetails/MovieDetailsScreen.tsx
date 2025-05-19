@@ -7,6 +7,8 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Dimensions,
+  Modal,
+  StyleSheet,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
@@ -14,12 +16,14 @@ import { WatchStackParamList } from "@navigation/stacks/WatchStackNavigator";
 import {
   fetchMovieDetails,
   fetchMovieImages,
+  fetchMovieTrailerKey,
   MovieDetails,
   MovieImagesResponse,
 } from "@services/movies";
 import COLORS from "@constants/colors";
 import FONTS from "@constants/fonts";
 import styles from "./style";
+import YoutubePlayer from "react-native-youtube-iframe";
 
 const { width } = Dimensions.get("window");
 
@@ -34,6 +38,10 @@ const MovieDetailsScreen = () => {
   const [images, setImages] = useState<MovieImagesResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [trailerVisible, setTrailerVisible] = useState(false);
+  const [trailerKey, setTrailerKey] = useState<string | null>(null);
+  const [trailerLoading, setTrailerLoading] = useState(false);
+  const [trailerError, setTrailerError] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -44,7 +52,6 @@ const MovieDetailsScreen = () => {
           fetchMovieDetails(movieId),
           fetchMovieImages(movieId),
         ]);
-        console.log("images are ", imagesData);
         setDetails(detailsData);
         setImages(imagesData);
       } catch (err) {
@@ -55,6 +62,30 @@ const MovieDetailsScreen = () => {
     };
     load();
   }, [movieId]);
+
+  const handleWatchTrailer = async () => {
+    setTrailerLoading(true);
+    setTrailerError(null);
+    try {
+      const key = await fetchMovieTrailerKey(movieId);
+      if (key) {
+        console.log("key is", key);
+        setTrailerKey(key);
+        setTrailerVisible(true);
+      } else {
+        setTrailerError("Trailer not available.");
+      }
+    } catch (err) {
+      setTrailerError("Failed to load trailer.");
+    } finally {
+      setTrailerLoading(false);
+    }
+  };
+
+  const handleTrailerClose = () => {
+    setTrailerVisible(false);
+    setTrailerKey(null);
+  };
 
   if (loading) {
     return (
@@ -87,71 +118,131 @@ const MovieDetailsScreen = () => {
     : undefined;
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={{ paddingBottom: 32 }}
-    >
-      {/* Backdrop and header */}
-      <ImageBackground
-        source={backdropUrl ? { uri: backdropUrl } : undefined}
-        style={styles.backdrop}
-        // imageStyle={{ borderBottomLeftRadius: 32, borderBottomRightRadius: 32 }}
+    <>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={{ paddingBottom: 32 }}
       >
-        <View style={styles.headerRow}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.backBtn}
-          >
-            <Ionicons name="arrow-back" size={28} color={COLORS.white} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Watch</Text>
-        </View>
-        <View style={styles.backdropOverlay} />
-        <View style={styles.backdropContent}>
-          {/* <Text style={styles.movieTitle}>{details.title}</Text> */}
-          <Text style={styles.releaseDate}>
-            In Theaters {details.release_date}
-          </Text>
-          {/* Buttons */}
-          <TouchableOpacity style={styles.ticketsBtn}>
-            <Text style={styles.ticketsBtnText}>Get Tickets</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.trailerBtn}>
-            <Ionicons
-              name="play"
-              size={20}
-              color={COLORS.white}
-              style={{ marginRight: 8 }}
-            />
-            <Text style={styles.trailerBtnText}>Watch Trailer</Text>
-          </TouchableOpacity>
-        </View>
-      </ImageBackground>
-
-      {/* Genres */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Genres</Text>
-        <View style={styles.genresRow}>
-          {details.genres.map((genre) => (
-            <View
-              key={genre.id}
-              style={[
-                styles.genrePill,
-                { backgroundColor: genreColor(genre.name) },
-              ]}
+        {/* Backdrop and header */}
+        <ImageBackground
+          source={backdropUrl ? { uri: backdropUrl } : undefined}
+          style={styles.backdrop}
+          // imageStyle={{
+          //   borderBottomLeftRadius: 32,
+          //   borderBottomRightRadius: 32,
+          // }}
+        >
+          <View style={styles.headerRow}>
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={styles.backBtn}
             >
-              <Text style={styles.genreText}>{genre.name}</Text>
-            </View>
-          ))}
-        </View>
-      </View>
+              <Ionicons name="arrow-back" size={28} color={COLORS.white} />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Watch</Text>
+          </View>
+          <View style={styles.backdropOverlay} />
+          <View style={styles.backdropContent}>
+            {/* <Text style={styles.movieTitle}>{details.title}</Text> */}
+            <Text style={styles.releaseDate}>
+              In Theaters {details.release_date}
+            </Text>
+            {/* Buttons */}
+            <TouchableOpacity style={styles.ticketsBtn}>
+              <Text style={styles.ticketsBtnText}>Get Tickets</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.trailerBtn}
+              onPress={handleWatchTrailer}
+            >
+              <Ionicons
+                name="play"
+                size={20}
+                color={COLORS.white}
+                style={{ marginRight: 8 }}
+              />
+              <Text style={styles.trailerBtnText}>Watch Trailer</Text>
+            </TouchableOpacity>
+            {trailerLoading && (
+              <ActivityIndicator
+                size="small"
+                color={COLORS.white}
+                style={{ marginTop: 8 }}
+              />
+            )}
+            {trailerError && (
+              <Text style={{ color: COLORS.pink, marginTop: 8 }}>
+                {trailerError}
+              </Text>
+            )}
+          </View>
+        </ImageBackground>
 
-      {/* Overview */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Overview</Text>
-        <Text style={styles.overview}>{details.overview}</Text>
-      </View>
-    </ScrollView>
+        {/* Genres */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Genres</Text>
+          <View style={styles.genresRow}>
+            {details.genres.map((genre) => (
+              <View
+                key={genre.id}
+                style={[
+                  styles.genrePill,
+                  { backgroundColor: genreColor(genre.name) },
+                ]}
+              >
+                <Text style={styles.genreText}>{genre.name}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* Overview */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Overview</Text>
+          <Text style={styles.overview}>{details.overview}</Text>
+        </View>
+      </ScrollView>
+
+      {/* Trailer Modal */}
+      <Modal
+        visible={trailerVisible}
+        animationType="slide"
+        onRequestClose={handleTrailerClose}
+        presentationStyle="fullScreen"
+      >
+        <View style={modalStyles.container}>
+          <View style={modalStyles.header}>
+            <TouchableOpacity
+              onPress={handleTrailerClose}
+              style={modalStyles.doneBtn}
+            >
+              <Text style={modalStyles.doneText}>Done</Text>
+            </TouchableOpacity>
+          </View>
+          {trailerKey ? (
+            <YoutubePlayer
+              height={300}
+              width={"100%"}
+              play={trailerVisible}
+              videoId={trailerKey}
+              onChangeState={(event: string) => {
+                if (event === "ended") {
+                  handleTrailerClose();
+                }
+              }}
+              forceAndroidAutoplay
+              webViewProps={{ allowsFullscreenVideo: true }}
+            />
+          ) : (
+            <ActivityIndicator
+              size="large"
+              color={COLORS.darkPurple}
+              style={{ flex: 1 }}
+            />
+          )}
+        </View>
+      </Modal>
+    </>
   );
 };
 
@@ -169,5 +260,39 @@ function genreColor(name: string) {
       return COLORS.gray;
   }
 }
+
+const modalStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.black,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  header: {
+    width: "100%",
+    paddingTop: 48,
+    paddingHorizontal: 16,
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    backgroundColor: COLORS.black,
+    zIndex: 2,
+  },
+  doneBtn: {
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: COLORS.gray,
+  },
+  doneText: {
+    color: COLORS.white,
+    fontFamily: FONTS.medium,
+    fontSize: 16,
+  },
+  webview: {
+    flex: 1,
+    width: "100%",
+    backgroundColor: COLORS.black,
+  },
+});
 
 export default MovieDetailsScreen;
