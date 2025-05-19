@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { WatchStackParamList } from "@navigation/stacks/WatchStackNavigator";
 import {
   fetchMovieDetails,
@@ -30,7 +31,8 @@ const { width, height } = Dimensions.get("window");
 type MovieDetailsRouteProp = RouteProp<WatchStackParamList, "MovieDetails">;
 
 const MovieDetailsScreen = () => {
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<WatchStackParamList>>();
   const route = useRoute<MovieDetailsRouteProp>();
   const { movieId } = route.params;
 
@@ -148,7 +150,16 @@ const MovieDetailsScreen = () => {
               In Theaters {details.release_date}
             </Text>
             {/* Buttons */}
-            <TouchableOpacity style={styles.ticketsBtn}>
+            <TouchableOpacity
+              style={styles.ticketsBtn}
+              onPress={() =>
+                navigation.navigate("GetTickets", {
+                  movieId: details.id,
+                  title: details.title,
+                  releaseDate: details.release_date,
+                })
+              }
+            >
               <Text style={styles.ticketsBtnText}>Get Tickets</Text>
             </TouchableOpacity>
             <TouchableOpacity
