@@ -19,8 +19,8 @@ const styles = StyleSheet.create({
     width: "100%",
     height: width * 0.8,
     justifyContent: "flex-end",
-    borderBottomLeftRadius: 32,
-    borderBottomRightRadius: 32,
+    // borderBottomLeftRadius: 32,
+    // borderBottomRightRadius: 32,
     overflow: "hidden",
   },
   backdropOverlay: {
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   },
   headerRow: {
     position: "absolute",
-    top: 48,
+    top: 24,
     left: 0,
     right: 0,
     flexDirection: "row",
@@ -40,8 +40,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   backBtn: {
-    backgroundColor: "rgba(0,0,0,0.4)",
-    borderRadius: 20,
     padding: 4,
     marginRight: 12,
   },
@@ -64,7 +62,7 @@ const styles = StyleSheet.create({
   },
   releaseDate: {
     color: COLORS.white,
-    fontFamily: FONTS.regular,
+    fontFamily: FONTS.medium,
     fontSize: 16,
     marginBottom: 16,
     textAlign: "center",
@@ -75,6 +73,10 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 32,
     marginBottom: 12,
+    alignSelf: "center",
+    width: "70%",
+    // minWidth: 220,
+    alignItems: "center",
   },
   ticketsBtnText: {
     color: COLORS.white,
@@ -89,6 +91,10 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingVertical: 10,
     paddingHorizontal: 32,
+    alignSelf: "center",
+    width: "70%",
+    // minWidth: 220,
+    justifyContent: "center",
   },
   trailerBtnText: {
     color: COLORS.white,

@@ -44,6 +44,7 @@ const MovieDetailsScreen = () => {
           fetchMovieDetails(movieId),
           fetchMovieImages(movieId),
         ]);
+        console.log("images are ", imagesData);
         setDetails(detailsData);
         setImages(imagesData);
       } catch (err) {
@@ -94,7 +95,7 @@ const MovieDetailsScreen = () => {
       <ImageBackground
         source={backdropUrl ? { uri: backdropUrl } : undefined}
         style={styles.backdrop}
-        imageStyle={{ borderBottomLeftRadius: 32, borderBottomRightRadius: 32 }}
+        // imageStyle={{ borderBottomLeftRadius: 32, borderBottomRightRadius: 32 }}
       >
         <View style={styles.headerRow}>
           <TouchableOpacity
@@ -107,7 +108,7 @@ const MovieDetailsScreen = () => {
         </View>
         <View style={styles.backdropOverlay} />
         <View style={styles.backdropContent}>
-          <Text style={styles.movieTitle}>{details.title}</Text>
+          {/* <Text style={styles.movieTitle}>{details.title}</Text> */}
           <Text style={styles.releaseDate}>
             In Theaters {details.release_date}
           </Text>
