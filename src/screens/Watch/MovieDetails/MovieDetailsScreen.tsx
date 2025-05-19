@@ -25,7 +25,7 @@ import FONTS from "@constants/fonts";
 import styles from "./style";
 import YoutubePlayer from "react-native-youtube-iframe";
 
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
 type MovieDetailsRouteProp = RouteProp<WatchStackParamList, "MovieDetails">;
 
@@ -210,29 +210,37 @@ const MovieDetailsScreen = () => {
         onRequestClose={handleTrailerClose}
         presentationStyle="fullScreen"
       >
-        <View style={modalStyles.container}>
-          <View style={modalStyles.header}>
-            <TouchableOpacity
-              onPress={handleTrailerClose}
-              style={modalStyles.doneBtn}
-            >
-              <Text style={modalStyles.doneText}>Done</Text>
-            </TouchableOpacity>
-          </View>
+        <View style={centeredModalStyles.container}>
+          {/* Custom Done button overlay */}
+          <TouchableOpacity
+            onPress={handleTrailerClose}
+            style={centeredModalStyles.doneBtn}
+            activeOpacity={0.8}
+          >
+            <Text style={centeredModalStyles.doneText}>Done</Text>
+          </TouchableOpacity>
           {trailerKey ? (
-            <YoutubePlayer
-              height={300}
-              width={"100%"}
-              play={trailerVisible}
-              videoId={trailerKey}
-              onChangeState={(event: string) => {
-                if (event === "ended") {
-                  handleTrailerClose();
-                }
-              }}
-              forceAndroidAutoplay
-              webViewProps={{ allowsFullscreenVideo: true }}
-            />
+            <View style={centeredModalStyles.playerWrapper}>
+              <YoutubePlayer
+                height={height * 0.35}
+                width={width * 0.95}
+                play={trailerVisible}
+                videoId={trailerKey}
+                initialPlayerParams={{
+                  controls: true,
+                  modestbranding: true,
+                  fs: 1,
+                  autoplay: true,
+                }}
+                onChangeState={(event: string) => {
+                  if (event === "ended") {
+                    handleTrailerClose();
+                  }
+                }}
+                forceAndroidAutoplay
+                webViewProps={{ allowsFullscreenVideo: true }}
+              />
+            </View>
           ) : (
             <ActivityIndicator
               size="large"
@@ -261,37 +269,35 @@ function genreColor(name: string) {
   }
 }
 
-const modalStyles = StyleSheet.create({
+const centeredModalStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.black,
     justifyContent: "center",
     alignItems: "center",
-  },
-  header: {
     width: "100%",
-    paddingTop: 48,
-    paddingHorizontal: 16,
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    backgroundColor: COLORS.black,
-    zIndex: 2,
+    height: "100%",
   },
   doneBtn: {
-    padding: 8,
-    borderRadius: 8,
+    position: "absolute",
+    top: 48,
+    right: 24,
+    zIndex: 10,
     backgroundColor: COLORS.gray,
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 18,
   },
   doneText: {
     color: COLORS.white,
     fontFamily: FONTS.medium,
     fontSize: 16,
   },
-  webview: {
+  playerWrapper: {
+    justifyContent: "center",
+    alignItems: "center",
     flex: 1,
     width: "100%",
-    backgroundColor: COLORS.black,
   },
 });
 
