@@ -14,12 +14,18 @@ import styles from "./style";
 import COLORS from "@constants/colors";
 import FONTS from "@constants/fonts";
 import { fetchUpcomingMovies, Movie } from "@services/movies";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { WatchStackParamList } from "@navigation/stacks/WatchStackNavigator";
 
 const MovieListScreen = () => {
   const [search, setSearch] = useState("");
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const navigation =
+    useNavigation<NativeStackNavigationProp<WatchStackParamList>>();
 
   const loadMovies = useCallback(async () => {
     setLoading(true);
@@ -43,6 +49,10 @@ const MovieListScreen = () => {
         movie.title.toLowerCase().includes(search.toLowerCase())
       )
     : movies;
+
+  const handleMoviePress = (movieId: number) => {
+    navigation.navigate("MovieDetails", { movieId });
+  };
 
   return (
     <View style={styles.container}>
@@ -112,18 +122,23 @@ const MovieListScreen = () => {
           contentContainerStyle={{ paddingVertical: 16 }}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
-            <View style={styles.cardWrapper}>
-              <ImageBackground
-                source={{
-                  uri: `https://image.tmdb.org/t/p/w500${item.backdrop_path}`,
-                }}
-                style={styles.cardImage}
-                imageStyle={styles.cardImageStyle}
-              >
-                <View style={styles.cardOverlay} />
-                <Text style={styles.cardTitle}>{item.title}</Text>
-              </ImageBackground>
-            </View>
+            <TouchableOpacity
+              onPress={() => handleMoviePress(item.id)}
+              activeOpacity={0.8}
+            >
+              <View style={styles.cardWrapper}>
+                <ImageBackground
+                  source={{
+                    uri: `https://image.tmdb.org/t/p/w500${item.backdrop_path}`,
+                  }}
+                  style={styles.cardImage}
+                  imageStyle={styles.cardImageStyle}
+                >
+                  <View style={styles.cardOverlay} />
+                  <Text style={styles.cardTitle}>{item.title}</Text>
+                </ImageBackground>
+              </View>
+            </TouchableOpacity>
           )}
           ItemSeparatorComponent={() => <View style={{ height: 24 }} />}
         />
