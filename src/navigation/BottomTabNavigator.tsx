@@ -1,7 +1,7 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import DashboardScreen from "@screens/DashboardScreen";
-import WatchScreen from "@screens/WatchScreen";
+import WatchStackNavigator from "@navigation/stacks/WatchStackNavigator";
 import MediaLibraryScreen from "@screens/MediaLibraryScreen";
 import MoreScreen from "@screens/MoreScreen";
 import { Ionicons } from "@expo/vector-icons";
@@ -58,7 +58,7 @@ const BottomTabNavigator = () => (
     })}
   >
     <Tab.Screen name="Dashboard" component={DashboardScreen} />
-    <Tab.Screen name="Watch" component={WatchScreen} />
+    <Tab.Screen name="Watch" component={WatchStackNavigator} />
     <Tab.Screen name="Media Library" component={MediaLibraryScreen} />
     <Tab.Screen name="More" component={MoreScreen} />
   </Tab.Navigator>
