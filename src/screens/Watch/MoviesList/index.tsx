@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import styles from "./style";
 import COLORS from "@constants/colors";
 import FONTS from "@constants/fonts";
@@ -18,6 +17,7 @@ import { WatchStackParamList } from "@navigation/stacks/WatchStackNavigator";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@src/store";
 import { setMovies, setLoading, setError } from "@src/store/moviesSlice";
+import Icon from "@src/components/Icon";
 
 const MovieListScreen = () => {
   const navigation =
@@ -55,7 +55,7 @@ const MovieListScreen = () => {
         <TouchableOpacity
           onPress={() => navigation.navigate("SearchScreen" as any)}
         >
-          <Ionicons name="search" size={24} color={COLORS.darkPurple} />
+          <Icon name="search" size={24} color={COLORS.darkPurple} />
         </TouchableOpacity>
       </View>
 

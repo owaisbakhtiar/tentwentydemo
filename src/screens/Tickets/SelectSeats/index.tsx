@@ -13,8 +13,7 @@ import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { WatchStackParamList } from "@navigation/stacks/WatchStackNavigator";
 import COLORS from "@constants/colors";
 import FONTS from "@constants/fonts";
-import { Ionicons, AntDesign } from "@expo/vector-icons";
-// import AntDesign from '@expo/vector-icons/AntDesign';
+import Icon from "@src/components/Icon";
 import IMAGES from "@constants/images";
 import styles from "./style";
 import TicketsHeader from "@src/components/TicketsHeader";
@@ -178,7 +177,12 @@ const SelectSeatsScreen = () => {
               {selected.map((s) => `${s.col} / ${s.row} row`).join(", ")}
             </Text>
             <TouchableOpacity onPress={() => setSelected([])}>
-              <Ionicons name="close" size={18} color={COLORS.gray} />
+              <Icon
+                type="Ionicons"
+                name="close"
+                size={18}
+                color={COLORS.gray}
+              />
             </TouchableOpacity>
           </View>
         ) : (

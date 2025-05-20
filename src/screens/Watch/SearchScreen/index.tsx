@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import Icon from "@src/components/Icon";
 import styles from "./style";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector, useDispatch } from "react-redux";
@@ -47,12 +47,7 @@ const SearchScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.searchBarWrapper}>
-        <Ionicons
-          name="search"
-          size={20}
-          color="#888"
-          style={{ marginLeft: 12 }}
-        />
+        <Icon name="search" size={20} color="#888" style={{ marginLeft: 12 }} />
         <TextInput
           style={[styles.searchBar, { flex: 1 }]}
           placeholder="TV shows, movies and more"
@@ -64,7 +59,7 @@ const SearchScreen = () => {
           onPress={() => navigation.goBack()}
           style={{ marginRight: 12 }}
         >
-          <Ionicons name="close" size={22} color="#888" />
+          <Icon name="close" size={22} color="#888" />
         </TouchableOpacity>
       </View>
       {localQuery.length === 0 ? (
@@ -112,7 +107,7 @@ const SearchScreen = () => {
                     <Text style={styles.resultGenre}>{item.genre}</Text>
                   )}
                 </View>
-                <Ionicons
+                <Icon
                   name="ellipsis-horizontal"
                   size={24}
                   color="#7AC7F6"
