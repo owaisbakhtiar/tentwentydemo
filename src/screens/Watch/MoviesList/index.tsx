@@ -1,54 +1,47 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
   FlatList,
   ImageBackground,
-  TextInput,
   TouchableOpacity,
   ActivityIndicator,
-  Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./style";
 import COLORS from "@constants/colors";
 import FONTS from "@constants/fonts";
-import { fetchUpcomingMovies, Movie } from "@services/movies";
+import { fetchUpcomingMovies } from "@services/movies";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { WatchStackParamList } from "@navigation/stacks/WatchStackNavigator";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@src/store";
+import { setMovies, setLoading, setError } from "@src/store/moviesSlice";
 
 const MovieListScreen = () => {
-  const [search, setSearch] = useState("");
-  const [movies, setMovies] = useState<Movie[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
   const navigation =
     useNavigation<NativeStackNavigationProp<WatchStackParamList>>();
-
-  const loadMovies = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await fetchUpcomingMovies();
-      setMovies(data);
-    } catch (err: any) {
-      setError("Failed to load movies. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const dispatch = useDispatch<AppDispatch>();
+  const { allMovies, loading, error } = useSelector(
+    (state: RootState) => state.movies
+  );
 
   useEffect(() => {
+    const loadMovies = async () => {
+      dispatch(setLoading(true));
+      dispatch(setError(null));
+      try {
+        const data = await fetchUpcomingMovies();
+        dispatch(setMovies(data));
+      } catch (err: any) {
+        dispatch(setError("Failed to load movies. Please try again."));
+      } finally {
+        dispatch(setLoading(false));
+      }
+    };
     loadMovies();
-  }, [loadMovies]);
-
-  const filteredMovies = search
-    ? movies.filter((movie) =>
-        movie.title.toLowerCase().includes(search.toLowerCase())
-      )
-    : movies;
+  }, [dispatch]);
 
   const handleMoviePress = (movieId: number) => {
     navigation.navigate("MovieDetails", { movieId });
@@ -77,7 +70,10 @@ const MovieListScreen = () => {
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-          <TouchableOpacity onPress={loadMovies} activeOpacity={0.7}>
+          <TouchableOpacity
+            onPress={() => dispatch(setError(null))}
+            activeOpacity={0.7}
+          >
             <Text
               style={{
                 color: COLORS.pink,
@@ -102,7 +98,7 @@ const MovieListScreen = () => {
         </View>
       ) : (
         <FlatList
-          data={filteredMovies}
+          data={allMovies}
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={{ paddingVertical: 16 }}
           showsVerticalScrollIndicator={false}

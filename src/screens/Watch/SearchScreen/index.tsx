@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   TextInput,
@@ -7,14 +7,18 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import styles from "../MoviesList/style";
+import styles from "./style";
 import { useNavigation } from "@react-navigation/native";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@src/store";
+import { setSearchQuery, clearSearch } from "@src/store/moviesSlice";
 
 const SearchScreen = () => {
-  const [search, setSearch] = useState("");
-  // Placeholder data for now
-  const [results, setResults] = useState([]);
   const navigation = useNavigation();
+  const dispatch = useDispatch<AppDispatch>();
+  const { searchQuery, searchResults } = useSelector(
+    (state: RootState) => state.movies
+  );
 
   return (
     <View style={styles.container}>
@@ -29,8 +33,8 @@ const SearchScreen = () => {
           style={[styles.searchBar, { flex: 1 }]}
           placeholder="TV shows, movies and more"
           placeholderTextColor="#888"
-          value={search}
-          onChangeText={setSearch}
+          value={searchQuery}
+          onChangeText={(text) => dispatch(setSearchQuery(text))}
         />
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -39,11 +43,36 @@ const SearchScreen = () => {
           <Ionicons name="close" size={22} color="#888" />
         </TouchableOpacity>
       </View>
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text style={{ color: "#888", fontSize: 18 }}>
-          Start typing to search...
-        </Text>
-      </View>
+      {searchQuery.length === 0 ? (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <Text style={styles.placeholderText}>Start typing to search...</Text>
+        </View>
+      ) : searchResults.length === 0 ? (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <Text style={styles.placeholderText}>No results found.</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={searchResults}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity style={{ padding: 16 }}>
+              <Text style={{ fontSize: 16, color: "#222", fontWeight: "bold" }}>
+                {item.title}
+              </Text>
+              {item.genre && (
+                <Text style={{ color: "#888", fontSize: 13 }}>
+                  {item.genre}
+                </Text>
+              )}
+            </TouchableOpacity>
+          )}
+        />
+      )}
     </View>
   );
 };

@@ -1,6 +1,8 @@
 import React from "react";
 import { useFonts } from "expo-font";
 import RootNavigator from "@navigation/RootNavigator";
+import { Provider } from "react-redux";
+import { store } from "./src/store";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -28,5 +30,9 @@ export default function App() {
     return null;
   }
 
-  return <RootNavigator />;
+  return (
+    <Provider store={store}>
+      <RootNavigator />
+    </Provider>
+  );
 }
