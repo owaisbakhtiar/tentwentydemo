@@ -91,7 +91,6 @@ export const fetchMovieTrailerKey = async (
   if (!trailer) {
     trailer = response.data.results.find((video) => video.site === "YouTube");
   }
-  console.log("trailer is", JSON.stringify(trailer));
   return trailer ? trailer.key : null;
 };
 
@@ -99,6 +98,5 @@ export const searchMovies = async (query: string): Promise<Movie[]> => {
   const response = await api.get<MoviesResponse>(
     `search/movie?query=${encodeURIComponent(query)}`
   );
-  console.log("search results", JSON.stringify(response.data.results));
   return response.data.results;
 };

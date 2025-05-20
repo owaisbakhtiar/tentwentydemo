@@ -71,7 +71,6 @@ const MovieDetailsScreen = () => {
     try {
       const key = await fetchMovieTrailerKey(movieId);
       if (key) {
-        console.log("key is", key);
         setTrailerKey(key);
         setTrailerVisible(true);
       } else {
