@@ -17,9 +17,12 @@ import {
   clearSearch,
   fetchSearchResults,
 } from "@src/store/moviesSlice";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { WatchStackParamList } from "@navigation/stacks/WatchStackNavigator";
 
 const SearchScreen = () => {
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<WatchStackParamList>>();
   const dispatch = useDispatch<AppDispatch>();
   const { searchQuery, searchResults, loading } = useSelector(
     (state: RootState) => state.movies
@@ -36,6 +39,10 @@ const SearchScreen = () => {
     }, 400);
     return () => clearTimeout(handler);
   }, [localQuery, dispatch]);
+
+  const handleMoviePress = (movieId: number) => {
+    navigation.navigate("MovieDetails", { movieId });
+  };
 
   return (
     <View style={styles.container}>
@@ -86,7 +93,11 @@ const SearchScreen = () => {
             data={searchResults}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
-              <TouchableOpacity style={styles.resultRow}>
+              <TouchableOpacity
+                style={styles.resultRow}
+                onPress={() => handleMoviePress(item.id)}
+                activeOpacity={0.7}
+              >
                 <Image
                   source={{
                     uri: `https://image.tmdb.org/t/p/w500${
