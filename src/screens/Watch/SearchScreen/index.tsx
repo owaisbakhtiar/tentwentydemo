@@ -5,6 +5,7 @@ import {
   FlatList,
   Text,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./style";
@@ -19,7 +20,7 @@ const SearchScreen = () => {
   const { searchQuery, searchResults } = useSelector(
     (state: RootState) => state.movies
   );
-
+  console.log("search results", JSON.stringify(searchResults));
   return (
     <View style={styles.container}>
       <View style={styles.searchBarWrapper}>
@@ -56,22 +57,39 @@ const SearchScreen = () => {
           <Text style={styles.placeholderText}>No results found.</Text>
         </View>
       ) : (
-        <FlatList
-          data={searchResults}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={{ padding: 16 }}>
-              <Text style={{ fontSize: 16, color: "#222", fontWeight: "bold" }}>
-                {item.title}
-              </Text>
-              {item.genre && (
-                <Text style={{ color: "#888", fontSize: 13 }}>
-                  {item.genre}
-                </Text>
-              )}
-            </TouchableOpacity>
-          )}
-        />
+        <View style={{ flex: 1 }}>
+          <Text style={styles.sectionTitle}>Top Results</Text>
+          <View style={styles.divider} />
+          <FlatList
+            data={searchResults}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <TouchableOpacity style={styles.resultRow}>
+                <Image
+                  source={{
+                    uri: `https://image.tmdb.org/t/p/w500${
+                      item.backdrop_path || item.poster_path
+                    }`,
+                  }}
+                  style={styles.resultImage}
+                />
+                <View style={styles.resultTextContainer}>
+                  <Text style={styles.resultTitle}>{item.title}</Text>
+                  {item.genre && (
+                    <Text style={styles.resultGenre}>{item.genre}</Text>
+                  )}
+                </View>
+                <Ionicons
+                  name="ellipsis-horizontal"
+                  size={24}
+                  color="#7AC7F6"
+                  style={styles.menuIcon}
+                />
+              </TouchableOpacity>
+            )}
+            contentContainerStyle={{ paddingBottom: 24 }}
+          />
+        </View>
       )}
     </View>
   );

@@ -5,6 +5,7 @@ export interface Movie {
   title: string;
   genre?: string;
   backdrop_path?: string;
+  poster_path?: string;
   // Add other fields as needed
 }
 
