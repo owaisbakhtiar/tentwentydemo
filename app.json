@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "TenTwentyDemo",
-    "slug": "TenTwentyDemo",
+    "slug": "tentwentydemo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -20,10 +20,17 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.owaisbakhtiar.tentwentydemo"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "4d8bf919-bb9f-4a88-bab7-04f97643257b"
+      }
+    },
+    "owner": "owaisbakhtiar"
   }
 }

@@ -15,11 +15,6 @@ const styles = StyleSheet.create({
     margin: 16,
     paddingVertical: 6,
     paddingHorizontal: 0,
-    shadowColor: COLORS.darkPurple,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 1,
   },
   searchBar: {
     flex: 1,
