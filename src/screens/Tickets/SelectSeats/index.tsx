@@ -17,6 +17,7 @@ import { Ionicons, AntDesign } from "@expo/vector-icons";
 // import AntDesign from '@expo/vector-icons/AntDesign';
 import IMAGES from "@constants/images";
 import styles from "./style";
+import TicketsHeader from "@src/components/TicketsHeader";
 const { width } = Dimensions.get("window");
 
 type SelectSeatsRouteProp = RouteProp<WatchStackParamList, "SelectSeats">;
@@ -83,21 +84,10 @@ const SelectSeatsScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backBtn}
-        >
-          <AntDesign name="left" size={24} color={COLORS.darkPurple} />
-        </TouchableOpacity>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.subTitle}>
-            {date} | {time} {hall}
-          </Text>
-        </View>
-        <View style={{ width: 40 }} />
-      </View>
+      <TicketsHeader
+        title={title}
+        releaseDate={`In Theaters ${date} | ${time} ${hall}`}
+      />
 
       {/* Seat Map */}
       <ScrollView contentContainerStyle={styles.seatsContainer}>

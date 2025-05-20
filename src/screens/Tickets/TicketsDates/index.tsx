@@ -18,6 +18,7 @@ import { Ionicons } from "@expo/vector-icons";
 import IMAGES from "@constants/images";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import styles from "./style";
+import TicketsHeader from "@src/components/TicketsHeader";
 const { width } = Dimensions.get("window");
 
 type GetTicketsRouteProp = RouteProp<WatchStackParamList, "GetTickets">;
@@ -68,7 +69,7 @@ const GetTicketsDatesScreen = () => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
       {/* Header */}
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backBtn}
@@ -80,7 +81,8 @@ const GetTicketsDatesScreen = () => {
           <Text style={styles.releaseDate}>In Theaters {releaseDate}</Text>
         </View>
         <View style={{ width: 40 }} />
-      </View>
+      </View> */}
+      <TicketsHeader title={title} releaseDate={`In Theaters ${releaseDate}`} />
 
       {/* Date Selector */}
       <View style={styles.section}>
