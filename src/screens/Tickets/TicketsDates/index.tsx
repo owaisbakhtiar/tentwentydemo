@@ -19,9 +19,10 @@ import IMAGES from "@constants/images";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import styles from "./style";
 import TicketsHeader from "@src/components/TicketsHeader";
+import type { RootStackParamList } from "@navigation/RootStackParamList";
 const { width } = Dimensions.get("window");
 
-type GetTicketsRouteProp = RouteProp<WatchStackParamList, "GetTickets">;
+type GetTicketsRouteProp = RouteProp<RootStackParamList, "GetTickets">;
 
 const mockDates = ["5 Mar", "6 Mar", "7 Mar", "8 Mar", "9 Mar", "10 Mar"];
 
@@ -46,7 +47,7 @@ const mockShowtimes = [
 
 const GetTicketsDatesScreen = () => {
   const navigation =
-    useNavigation<NativeStackNavigationProp<WatchStackParamList>>();
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const route = useRoute<GetTicketsRouteProp>();
   const { title, releaseDate } = route.params;
   const [selectedDate, setSelectedDate] = useState(mockDates[0]);

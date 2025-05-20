@@ -10,7 +10,7 @@ import {
   Image,
 } from "react-native";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { WatchStackParamList } from "@navigation/stacks/WatchStackNavigator";
+import { RootStackParamList } from "@navigation/RootStackParamList";
 import COLORS from "@constants/colors";
 import FONTS from "@constants/fonts";
 import Icon from "@src/components/Icon";
@@ -19,7 +19,7 @@ import styles from "./style";
 import TicketsHeader from "@src/components/TicketsHeader";
 const { width } = Dimensions.get("window");
 
-type SelectSeatsRouteProp = RouteProp<WatchStackParamList, "SelectSeats">;
+type SelectSeatsRouteProp = RouteProp<RootStackParamList, "SelectSeats">;
 
 type SeatType = "regular" | "vip" | "selected" | "unavailable";
 
