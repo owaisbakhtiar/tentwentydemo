@@ -55,6 +55,19 @@ const MoviesListScreen = () => {
     navigation.navigate("MovieDetails", { movieId });
   };
 
+  const handleRetry = async () => {
+    dispatch(setError(null));
+    dispatch(setLoading(true));
+    try {
+      const data = await fetchUpcomingMovies();
+      dispatch(setMovies(data));
+    } catch (err: any) {
+      dispatch(setError(err.message || "Failed to load movies"));
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   const renderItem = useCallback(
     ({ item }: { item: Movie }) => (
       <MovieCard item={item} onPress={() => handleMoviePress(item.id)} />
@@ -78,7 +91,7 @@ const MoviesListScreen = () => {
           style={{ marginTop: 40 }}
         />
       ) : error ? (
-        <ErrorView error={error} onRetry={() => dispatch(setError(null))} />
+        <ErrorView error={error} onRetry={handleRetry} />
       ) : (
         <FlatList
           data={movies}
