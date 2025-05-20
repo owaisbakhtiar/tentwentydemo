@@ -7,11 +7,11 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Dimensions,
-  Modal,
   StyleSheet,
 } from "react-native";
 import Icon from "@src/components/Icon";
 import GenreSection from "@src/components/GenreSection";
+import VideoPlayerModal from "@src/components/VideoPlayerModal";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { WatchStackParamList } from "@navigation/stacks/WatchStackNavigator";
@@ -25,7 +25,6 @@ import {
 import COLORS from "@constants/colors";
 import FONTS from "@constants/fonts";
 import styles from "./style";
-import YoutubePlayer from "react-native-youtube-iframe";
 
 const { width, height } = Dimensions.get("window");
 
@@ -205,87 +204,13 @@ const MovieDetailsScreen = () => {
         </View>
       </ScrollView>
 
-      {/* Trailer Modal */}
-      <Modal
+      <VideoPlayerModal
         visible={trailerVisible}
-        animationType="slide"
-        onRequestClose={handleTrailerClose}
-        presentationStyle="fullScreen"
-      >
-        <View style={centeredModalStyles.container}>
-          {/* Custom Done button overlay */}
-          <TouchableOpacity
-            onPress={handleTrailerClose}
-            style={centeredModalStyles.doneBtn}
-            activeOpacity={0.8}
-          >
-            <Text style={centeredModalStyles.doneText}>Done</Text>
-          </TouchableOpacity>
-          {trailerKey ? (
-            <View style={centeredModalStyles.playerWrapper}>
-              <YoutubePlayer
-                height={height * 0.35}
-                width={width * 0.95}
-                play={trailerVisible}
-                videoId={trailerKey}
-                initialPlayerParams={{
-                  controls: true,
-                  modestbranding: true,
-                  fs: 1,
-                  autoplay: true,
-                }}
-                onChangeState={(event: string) => {
-                  if (event === "ended") {
-                    handleTrailerClose();
-                  }
-                }}
-                forceAndroidAutoplay
-                webViewProps={{ allowsFullscreenVideo: true }}
-              />
-            </View>
-          ) : (
-            <ActivityIndicator
-              size="large"
-              color={COLORS.darkPurple}
-              style={{ flex: 1 }}
-            />
-          )}
-        </View>
-      </Modal>
+        videoId={trailerKey}
+        onClose={handleTrailerClose}
+      />
     </>
   );
 };
-
-const centeredModalStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.black,
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    height: "100%",
-  },
-  doneBtn: {
-    position: "absolute",
-    top: 48,
-    right: 24,
-    zIndex: 10,
-    backgroundColor: COLORS.gray,
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 18,
-  },
-  doneText: {
-    color: COLORS.white,
-    fontFamily: FONTS.medium,
-    fontSize: 16,
-  },
-  playerWrapper: {
-    justifyContent: "center",
-    alignItems: "center",
-    flex: 1,
-    width: "100%",
-  },
-});
 
 export default MovieDetailsScreen;
