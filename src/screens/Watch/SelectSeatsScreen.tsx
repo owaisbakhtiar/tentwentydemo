@@ -1,0 +1,365 @@
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+  Dimensions,
+  SafeAreaView,
+  Image,
+} from "react-native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { WatchStackParamList } from "@navigation/stacks/WatchStackNavigator";
+import COLORS from "@constants/colors";
+import FONTS from "@constants/fonts";
+import { Ionicons } from "@expo/vector-icons";
+import IMAGES from "@constants/images";
+
+const { width } = Dimensions.get("window");
+
+type SelectSeatsRouteProp = RouteProp<WatchStackParamList, "SelectSeats">;
+
+type SeatType = "regular" | "vip" | "selected" | "unavailable";
+
+type Seat = {
+  row: number;
+  col: number;
+  type: SeatType;
+};
+
+// Mock seat map: 10 rows x 18 cols
+const seatMap: Seat[][] = Array.from({ length: 10 }, (_, row) =>
+  Array.from({ length: 18 }, (_, col) => {
+    let type: SeatType = "regular";
+    if (row === 9) type = "vip";
+    if ((row === 4 && col === 8) || (row === 5 && col === 12))
+      type = "unavailable";
+    return { row: row + 1, col: col + 1, type };
+  })
+);
+
+const seatPrices = {
+  regular: 50,
+  vip: 150,
+};
+
+const SelectSeatsScreen = () => {
+  const navigation = useNavigation();
+  const route = useRoute<SelectSeatsRouteProp>();
+  const { title, date, time, hall, price } = route.params;
+  const [selected, setSelected] = useState<
+    { row: number; col: number; type: SeatType }[]
+  >([]);
+
+  const handleSelect = (seat: Seat) => {
+    if (seat.type === "unavailable") return;
+    const exists = selected.find(
+      (s) => s.row === seat.row && s.col === seat.col
+    );
+    if (exists) {
+      setSelected(
+        selected.filter((s) => !(s.row === seat.row && s.col === seat.col))
+      );
+    } else {
+      setSelected([...selected, { ...seat, type: seat.type }]);
+    }
+  };
+
+  const getSeatColor = (type: SeatType, isSelected: boolean) => {
+    if (isSelected) return COLORS.gold;
+    if (type === "vip") return COLORS.purple;
+    if (type === "regular") return COLORS.skyBlue;
+    if (type === "unavailable") return COLORS.gray;
+    return COLORS.gray;
+  };
+
+  const totalPrice = selected.reduce(
+    (sum, seat) => sum + seatPrices[seat.type === "vip" ? "vip" : "regular"],
+    0
+  );
+
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightBackground }}>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backBtn}
+        >
+          <Ionicons name="arrow-back" size={24} color={COLORS.darkPurple} />
+        </TouchableOpacity>
+        <View style={{ flex: 1, alignItems: "center" }}>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.subTitle}>
+            {date} | {time} {hall}
+          </Text>
+        </View>
+        <View style={{ width: 40 }} />
+      </View>
+
+      {/* Seat Map */}
+      <ScrollView
+        contentContainerStyle={{ alignItems: "center", paddingBottom: 24 }}
+      >
+        <Text style={styles.screenLabel}>SCREEN</Text>
+        <View style={styles.screenCurve} />
+        <View style={styles.seatMapContainer}>
+          {seatMap.map((row, rowIdx) => (
+            <View
+              key={rowIdx}
+              style={{ flexDirection: "row", marginBottom: 8 }}
+            >
+              {row.map((seat, colIdx) => {
+                const isSelected = selected.some(
+                  (s) => s.row === seat.row && s.col === seat.col
+                );
+                return (
+                  <TouchableOpacity
+                    key={colIdx}
+                    style={styles.seatTouchable}
+                    onPress={() => handleSelect(seat)}
+                    activeOpacity={seat.type === "unavailable" ? 1 : 0.7}
+                  >
+                    <Image
+                      source={IMAGES.seat}
+                      style={[
+                        styles.seatImg,
+                        { tintColor: getSeatColor(seat.type, isSelected) },
+                      ]}
+                      resizeMode="contain"
+                    />
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+
+      {/* Legend & Info */}
+      <View style={styles.legendContainer}>
+        <View style={styles.legendRow}>
+          <View style={styles.legendItem}>
+            <Image
+              source={IMAGES.seat}
+              style={[styles.legendSeatImg, { tintColor: COLORS.gold }]}
+              resizeMode="contain"
+            />
+            <Text style={styles.legendText}>Selected</Text>
+          </View>
+          <View style={styles.legendItem}>
+            <Image
+              source={IMAGES.seat}
+              style={[styles.legendSeatImg, { tintColor: COLORS.gray }]}
+              resizeMode="contain"
+            />
+            <Text style={styles.legendText}>Not available</Text>
+          </View>
+        </View>
+        <View style={styles.legendRow}>
+          <View style={styles.legendItem}>
+            <Image
+              source={IMAGES.seat}
+              style={[styles.legendSeatImg, { tintColor: COLORS.purple }]}
+              resizeMode="contain"
+            />
+            <Text style={styles.legendText}>VIP (150$)</Text>
+          </View>
+          <View style={styles.legendItem}>
+            <Image
+              source={IMAGES.seat}
+              style={[styles.legendSeatImg, { tintColor: COLORS.skyBlue }]}
+              resizeMode="contain"
+            />
+            <Text style={styles.legendText}>Regular (50 $)</Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Selected Seat Info & Actions */}
+      <View style={styles.selectedInfoRow}>
+        {selected.length > 0 ? (
+          <View style={styles.selectedSeatBox}>
+            <Text style={styles.selectedSeatText}>
+              {selected.map((s) => `${s.col} / ${s.row} row`).join(", ")}
+            </Text>
+            <TouchableOpacity onPress={() => setSelected([])}>
+              <Ionicons name="close" size={18} color={COLORS.gray} />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <Text style={styles.selectedSeatText}>No seat selected</Text>
+        )}
+      </View>
+
+      {/* Bottom Bar */}
+      <View style={styles.bottomBar}>
+        <View style={styles.priceBox}>
+          <Text style={styles.priceLabel}>Total Price</Text>
+          <Text style={styles.priceValue}>${totalPrice}</Text>
+        </View>
+        <TouchableOpacity
+          style={[styles.payBtn, { opacity: selected.length === 0 ? 0.5 : 1 }]}
+          disabled={selected.length === 0}
+          onPress={() => {
+            // TODO: Proceed to pay
+          }}
+        >
+          <Text style={styles.payBtnText}>Proceed to pay</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
+  );
+};
+
+const seatSize = Math.floor((width - 32) / 20);
+
+const styles = StyleSheet.create({
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 12,
+    backgroundColor: COLORS.lightBackground,
+  },
+  backBtn: {
+    width: 40,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 20,
+  },
+  title: {
+    fontFamily: FONTS.bold,
+    fontSize: 22,
+    color: COLORS.darkPurple,
+    textAlign: "center",
+  },
+  subTitle: {
+    fontFamily: FONTS.medium,
+    fontSize: 14,
+    color: COLORS.skyBlue,
+    textAlign: "center",
+    marginTop: 2,
+  },
+  screenLabel: {
+    fontFamily: FONTS.medium,
+    fontSize: 13,
+    color: COLORS.grayText,
+    textAlign: "center",
+    marginTop: 8,
+  },
+  screenCurve: {
+    width: width * 0.7,
+    height: 20,
+    borderTopWidth: 2,
+    borderColor: COLORS.gray,
+    borderRadius: 100,
+    alignSelf: "center",
+    marginBottom: 16,
+  },
+  seatMapContainer: {
+    backgroundColor: COLORS.lightBackground,
+    borderRadius: 16,
+    padding: 8,
+    marginBottom: 8,
+  },
+  seatTouchable: {
+    marginHorizontal: 2,
+    marginVertical: 1,
+  },
+  seatImg: {
+    width: seatSize,
+    height: seatSize,
+  },
+  legendContainer: {
+    marginVertical: 8,
+    paddingHorizontal: 8,
+  },
+  legendRow: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  legendItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    width: "35%",
+  },
+  legendSeatImg: {
+    width: 18,
+    height: 18,
+    marginRight: 12,
+  },
+  legendText: {
+    fontFamily: FONTS.medium,
+    fontSize: 13,
+    color: COLORS.grayText,
+  },
+  selectedInfoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 8,
+  },
+  selectedSeatBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: COLORS.white,
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginHorizontal: 8,
+  },
+  selectedSeatText: {
+    fontFamily: FONTS.medium,
+    fontSize: 16,
+    color: COLORS.darkPurple,
+    marginRight: 8,
+  },
+  bottomBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: COLORS.white,
+    padding: 16,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    shadowColor: COLORS.darkPurple,
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  priceBox: {
+    alignItems: "center",
+  },
+  priceLabel: {
+    fontFamily: FONTS.medium,
+    fontSize: 14,
+    color: COLORS.grayText,
+  },
+  priceValue: {
+    fontFamily: FONTS.bold,
+    fontSize: 22,
+    color: COLORS.darkPurple,
+  },
+  payBtn: {
+    backgroundColor: COLORS.skyBlue,
+    borderRadius: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    alignItems: "center",
+  },
+  payBtnText: {
+    fontFamily: FONTS.bold,
+    fontSize: 18,
+    color: COLORS.white,
+  },
+});
+
+export default SelectSeatsScreen;

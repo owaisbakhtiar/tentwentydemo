@@ -16,6 +16,7 @@ import COLORS from "@constants/colors";
 import FONTS from "@constants/fonts";
 import { Ionicons } from "@expo/vector-icons";
 import IMAGES from "@constants/images";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 const { width } = Dimensions.get("window");
 
@@ -43,11 +44,26 @@ const mockShowtimes = [
 ];
 
 const GetTicketsScreen = () => {
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<WatchStackParamList>>();
   const route = useRoute<GetTicketsRouteProp>();
   const { title, releaseDate } = route.params;
   const [selectedDate, setSelectedDate] = useState(mockDates[0]);
   const [selectedShowtime, setSelectedShowtime] = useState<number | null>(null);
+
+  const handleSelectSeats = (show?: (typeof mockShowtimes)[0]) => {
+    const showtime =
+      show || mockShowtimes.find((s) => s.id === selectedShowtime);
+    if (!showtime) return;
+    navigation.navigate("SelectSeats", {
+      movieId: route.params.movieId,
+      title: route.params.title,
+      date: selectedDate,
+      time: showtime.time,
+      hall: showtime.hall,
+      price: showtime.price,
+    });
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
@@ -116,7 +132,10 @@ const GetTicketsScreen = () => {
                 styles.showtimeCard,
                 selectedShowtime === show.id && styles.showtimeCardSelected,
               ]}
-              onPress={() => setSelectedShowtime(show.id)}
+              onPress={() => {
+                setSelectedShowtime(show.id);
+                handleSelectSeats(show);
+              }}
               activeOpacity={0.8}
             >
               <Text style={styles.showtimeTime}>{show.time}</Text>
@@ -140,9 +159,7 @@ const GetTicketsScreen = () => {
         <TouchableOpacity
           style={styles.selectSeatsBtn}
           disabled={selectedShowtime === null}
-          onPress={() => {
-            // TODO: Navigate to seat selection screen
-          }}
+          onPress={() => handleSelectSeats()}
         >
           <Text style={styles.selectSeatsText}>Select Seats</Text>
         </TouchableOpacity>
