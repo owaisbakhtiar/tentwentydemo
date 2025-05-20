@@ -2,8 +2,8 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MovieListScreen from "@src/screens/Watch/MoviesList/MovieListScreen";
 import MovieDetailsScreen from "@src/screens/Watch/MovieDetails/MovieDetailsScreen";
-import GetTicketsScreen from "@src/screens/Watch/GetTicketsScreen";
-import SelectSeatsScreen from "@src/screens/Watch/SelectSeatsScreen";
+import GetTicketsDatesScreen from "@src/screens/Tickets/TicketsDates/GetTicketsDates";
+import SelectSeatsScreen from "@src/screens/Tickets/SelectSeats/SelectSeatsScreen";
 
 export type WatchStackParamList = {
   MovieList: undefined;
@@ -26,7 +26,7 @@ const WatchStackNavigator = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="MovieList" component={MovieListScreen} />
     <Stack.Screen name="MovieDetails" component={MovieDetailsScreen} />
-    <Stack.Screen name="GetTickets" component={GetTicketsScreen} />
+    <Stack.Screen name="GetTickets" component={GetTicketsDatesScreen} />
     <Stack.Screen name="SelectSeats" component={SelectSeatsScreen} />
   </Stack.Navigator>
 );

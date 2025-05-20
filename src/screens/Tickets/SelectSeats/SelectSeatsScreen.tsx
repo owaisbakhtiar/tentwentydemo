@@ -13,9 +13,10 @@ import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { WatchStackParamList } from "@navigation/stacks/WatchStackNavigator";
 import COLORS from "@constants/colors";
 import FONTS from "@constants/fonts";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, AntDesign } from "@expo/vector-icons";
+// import AntDesign from '@expo/vector-icons/AntDesign';
 import IMAGES from "@constants/images";
-
+import styles from "./style";
 const { width } = Dimensions.get("window");
 
 type SelectSeatsRouteProp = RouteProp<WatchStackParamList, "SelectSeats">;
@@ -80,16 +81,16 @@ const SelectSeatsScreen = () => {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightBackground }}>
+    <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backBtn}
         >
-          <Ionicons name="arrow-back" size={24} color={COLORS.darkPurple} />
+          <AntDesign name="left" size={24} color={COLORS.darkPurple} />
         </TouchableOpacity>
-        <View style={{ flex: 1, alignItems: "center" }}>
+        <View style={{ flex: 1 }}>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.subTitle}>
             {date} | {time} {hall}
@@ -99,9 +100,7 @@ const SelectSeatsScreen = () => {
       </View>
 
       {/* Seat Map */}
-      <ScrollView
-        contentContainerStyle={{ alignItems: "center", paddingBottom: 24 }}
-      >
+      <ScrollView contentContainerStyle={styles.seatsContainer}>
         <Text style={styles.screenLabel}>SCREEN</Text>
         <View style={styles.screenCurve} />
         <View style={styles.seatMapContainer}>
@@ -124,8 +123,12 @@ const SelectSeatsScreen = () => {
                     <Image
                       source={IMAGES.seat}
                       style={[
-                        styles.seatImg,
-                        { tintColor: getSeatColor(seat.type, isSelected) },
+                        // styles.seatImg,
+                        {
+                          width: seatSize,
+                          height: seatSize,
+                          tintColor: getSeatColor(seat.type, isSelected),
+                        },
                       ]}
                       resizeMode="contain"
                     />
@@ -214,152 +217,5 @@ const SelectSeatsScreen = () => {
 };
 
 const seatSize = Math.floor((width - 32) / 20);
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 12,
-    backgroundColor: COLORS.lightBackground,
-  },
-  backBtn: {
-    width: 40,
-    height: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 20,
-  },
-  title: {
-    fontFamily: FONTS.bold,
-    fontSize: 22,
-    color: COLORS.darkPurple,
-    textAlign: "center",
-  },
-  subTitle: {
-    fontFamily: FONTS.medium,
-    fontSize: 14,
-    color: COLORS.skyBlue,
-    textAlign: "center",
-    marginTop: 2,
-  },
-  screenLabel: {
-    fontFamily: FONTS.medium,
-    fontSize: 13,
-    color: COLORS.grayText,
-    textAlign: "center",
-    marginTop: 8,
-  },
-  screenCurve: {
-    width: width * 0.7,
-    height: 20,
-    borderTopWidth: 2,
-    borderColor: COLORS.gray,
-    borderRadius: 100,
-    alignSelf: "center",
-    marginBottom: 16,
-  },
-  seatMapContainer: {
-    backgroundColor: COLORS.lightBackground,
-    borderRadius: 16,
-    padding: 8,
-    marginBottom: 8,
-  },
-  seatTouchable: {
-    marginHorizontal: 2,
-    marginVertical: 1,
-  },
-  seatImg: {
-    width: seatSize,
-    height: seatSize,
-  },
-  legendContainer: {
-    marginVertical: 8,
-    paddingHorizontal: 8,
-  },
-  legendRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  legendItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    width: "35%",
-  },
-  legendSeatImg: {
-    width: 18,
-    height: 18,
-    marginRight: 12,
-  },
-  legendText: {
-    fontFamily: FONTS.medium,
-    fontSize: 13,
-    color: COLORS.grayText,
-  },
-  selectedInfoRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 8,
-  },
-  selectedSeatBox: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: COLORS.white,
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginHorizontal: 8,
-  },
-  selectedSeatText: {
-    fontFamily: FONTS.medium,
-    fontSize: 16,
-    color: COLORS.darkPurple,
-    marginRight: 8,
-  },
-  bottomBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: COLORS.white,
-    padding: 16,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    shadowColor: COLORS.darkPurple,
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  priceBox: {
-    alignItems: "center",
-  },
-  priceLabel: {
-    fontFamily: FONTS.medium,
-    fontSize: 14,
-    color: COLORS.grayText,
-  },
-  priceValue: {
-    fontFamily: FONTS.bold,
-    fontSize: 22,
-    color: COLORS.darkPurple,
-  },
-  payBtn: {
-    backgroundColor: COLORS.skyBlue,
-    borderRadius: 16,
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    alignItems: "center",
-  },
-  payBtnText: {
-    fontFamily: FONTS.bold,
-    fontSize: 18,
-    color: COLORS.white,
-  },
-});
 
 export default SelectSeatsScreen;
