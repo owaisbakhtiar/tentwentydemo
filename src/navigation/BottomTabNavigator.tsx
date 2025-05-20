@@ -4,7 +4,7 @@ import DashboardScreen from "@screens/DashboardScreen";
 import WatchStackNavigator from "@navigation/stacks/WatchStackNavigator";
 import MediaLibraryScreen from "@screens/MediaLibraryScreen";
 import MoreScreen from "@screens/MoreScreen";
-import { Ionicons } from "@expo/vector-icons";
+import Icon from "@src/components/Icon";
 import { Platform } from "react-native";
 import COLORS from "@constants/colors";
 import FONTS from "@constants/fonts";
@@ -31,22 +31,53 @@ const BottomTabNavigator = () => {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
-          let iconName: string = "";
           switch (route.name) {
             case "Dashboard":
-              iconName = "grid-outline";
-              break;
+              return (
+                <Icon
+                  type="Ionicons"
+                  name="grid-outline"
+                  size={size}
+                  color={color}
+                />
+              );
             case "Watch":
-              iconName = "play-circle-outline";
-              break;
+              return (
+                <Icon
+                  type="FontAwesome"
+                  name="youtube-play"
+                  size={size}
+                  color={color}
+                />
+              );
             case "Media Library":
-              iconName = "folder-outline";
-              break;
+              return (
+                <Icon
+                  type="Ionicons"
+                  name="folder-outline"
+                  size={size}
+                  color={color}
+                />
+              );
             case "More":
-              iconName = "menu-outline";
-              break;
+              return (
+                <Icon
+                  type="Ionicons"
+                  name="menu-outline"
+                  size={size}
+                  color={color}
+                />
+              );
+            default:
+              return (
+                <Icon
+                  type="Ionicons"
+                  name="grid-outline"
+                  size={size}
+                  color={color}
+                />
+              );
           }
-          return <Ionicons name={iconName as any} size={size} color={color} />;
         },
         tabBarActiveTintColor: COLORS.white,
         tabBarInactiveTintColor: COLORS.grayText,
