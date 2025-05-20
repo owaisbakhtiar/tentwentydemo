@@ -1,6 +1,5 @@
 import axios from "axios";
-
-const API_KEY = "f5feee0582577c5ea60b0c78c48360f1"; // Replace with your real key in production
+import { API_KEY } from "@env";
 
 const api = axios.create({
   baseURL: "https://api.themoviedb.org/3/",
