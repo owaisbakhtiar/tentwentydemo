@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   TextInput,
@@ -16,9 +16,11 @@ import {
   setSearchQuery,
   clearSearch,
   fetchSearchResults,
+  Movie,
 } from "@src/store/moviesSlice";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { WatchStackParamList } from "@navigation/stacks/WatchStackNavigator";
+import SearchCard from "@src/components/SearchCard";
 
 const SearchScreen = () => {
   const navigation =
@@ -43,6 +45,13 @@ const SearchScreen = () => {
   const handleMoviePress = (movieId: number) => {
     navigation.navigate("MovieDetails", { movieId });
   };
+
+  const renderItem = useCallback(
+    ({ item }: { item: Movie }) => (
+      <SearchCard item={item} onPress={handleMoviePress} />
+    ),
+    [handleMoviePress]
+  );
 
   return (
     <View style={styles.container}>
@@ -87,34 +96,7 @@ const SearchScreen = () => {
           <FlatList
             data={searchResults}
             keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.resultRow}
-                onPress={() => handleMoviePress(item.id)}
-                activeOpacity={0.7}
-              >
-                <Image
-                  source={{
-                    uri: `https://image.tmdb.org/t/p/w500${
-                      item.backdrop_path || item.poster_path
-                    }`,
-                  }}
-                  style={styles.resultImage}
-                />
-                <View style={styles.resultTextContainer}>
-                  <Text style={styles.resultTitle}>{item.title}</Text>
-                  {item.genre && (
-                    <Text style={styles.resultGenre}>{item.genre}</Text>
-                  )}
-                </View>
-                <Icon
-                  name="ellipsis-horizontal"
-                  size={24}
-                  color="#7AC7F6"
-                  style={styles.menuIcon}
-                />
-              </TouchableOpacity>
-            )}
+            renderItem={renderItem}
             contentContainerStyle={{ paddingBottom: 24 }}
           />
         </View>
