@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { searchMovies } from "@services/movies";
 
 export interface Movie {
   id: number;
@@ -25,6 +26,17 @@ const initialState: MoviesState = {
   error: null,
 };
 
+export const fetchSearchResults = createAsyncThunk(
+  "movies/fetchSearchResults",
+  async (query: string, { rejectWithValue }) => {
+    try {
+      return await searchMovies(query);
+    } catch (err: any) {
+      return rejectWithValue(err.message || "Search failed");
+    }
+  }
+);
+
 const moviesSlice = createSlice({
   name: "movies",
   initialState,
@@ -35,9 +47,7 @@ const moviesSlice = createSlice({
     },
     setSearchQuery(state, action: PayloadAction<string>) {
       state.searchQuery = action.payload;
-      state.searchResults = state.allMovies.filter((movie) =>
-        movie.title.toLowerCase().includes(action.payload.toLowerCase())
-      );
+      // searchResults will be set by the async thunk
     },
     clearSearch(state) {
       state.searchQuery = "";
@@ -49,6 +59,21 @@ const moviesSlice = createSlice({
     setError(state, action: PayloadAction<string | null>) {
       state.error = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchSearchResults.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchSearchResults.fulfilled, (state, action) => {
+        state.loading = false;
+        state.searchResults = action.payload;
+      })
+      .addCase(fetchSearchResults.rejected, (state, action) => {
+        state.loading = false;
+        state.error = (action.payload as string) || "Search failed";
+      });
   },
 });
 

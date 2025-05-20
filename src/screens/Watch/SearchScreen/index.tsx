@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   TextInput,
@@ -12,15 +12,31 @@ import styles from "./style";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@src/store";
-import { setSearchQuery, clearSearch } from "@src/store/moviesSlice";
+import {
+  setSearchQuery,
+  clearSearch,
+  fetchSearchResults,
+} from "@src/store/moviesSlice";
 
 const SearchScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
-  const { searchQuery, searchResults } = useSelector(
+  const { searchQuery, searchResults, loading } = useSelector(
     (state: RootState) => state.movies
   );
-  console.log("search results", JSON.stringify(searchResults));
+  const [localQuery, setLocalQuery] = useState(searchQuery);
+
+  // Debounce search
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      dispatch(setSearchQuery(localQuery));
+      if (localQuery.trim()) {
+        dispatch(fetchSearchResults(localQuery));
+      }
+    }, 400);
+    return () => clearTimeout(handler);
+  }, [localQuery, dispatch]);
+
   return (
     <View style={styles.container}>
       <View style={styles.searchBarWrapper}>
@@ -34,8 +50,8 @@ const SearchScreen = () => {
           style={[styles.searchBar, { flex: 1 }]}
           placeholder="TV shows, movies and more"
           placeholderTextColor="#888"
-          value={searchQuery}
-          onChangeText={(text) => dispatch(setSearchQuery(text))}
+          value={localQuery}
+          onChangeText={setLocalQuery}
         />
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -44,11 +60,17 @@ const SearchScreen = () => {
           <Ionicons name="close" size={22} color="#888" />
         </TouchableOpacity>
       </View>
-      {searchQuery.length === 0 ? (
+      {localQuery.length === 0 ? (
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
           <Text style={styles.placeholderText}>Start typing to search...</Text>
+        </View>
+      ) : loading ? (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <Text style={styles.placeholderText}>Searching...</Text>
         </View>
       ) : searchResults.length === 0 ? (
         <View
