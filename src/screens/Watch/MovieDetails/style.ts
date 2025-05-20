@@ -111,23 +111,6 @@ const styles = StyleSheet.create({
     color: COLORS.darkPurple,
     marginBottom: 12,
   },
-  genresRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  genrePill: {
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    marginRight: 8,
-    marginBottom: 8,
-  },
-  genreText: {
-    color: COLORS.white,
-    fontFamily: FONTS.medium,
-    fontSize: 15,
-  },
   overview: {
     fontFamily: FONTS.regular,
     fontSize: 15,

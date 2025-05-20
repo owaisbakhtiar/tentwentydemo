@@ -11,6 +11,7 @@ import {
   StyleSheet,
 } from "react-native";
 import Icon from "@src/components/Icon";
+import GenreSection from "@src/components/GenreSection";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { WatchStackParamList } from "@navigation/stacks/WatchStackNavigator";
@@ -195,22 +196,7 @@ const MovieDetailsScreen = () => {
         </ImageBackground>
 
         {/* Genres */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Genres</Text>
-          <View style={styles.genresRow}>
-            {details.genres.map((genre) => (
-              <View
-                key={genre.id}
-                style={[
-                  styles.genrePill,
-                  { backgroundColor: genreColor(genre.name) },
-                ]}
-              >
-                <Text style={styles.genreText}>{genre.name}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
+        <GenreSection genres={details.genres} />
 
         {/* Overview */}
         <View style={styles.section}>
@@ -269,21 +255,6 @@ const MovieDetailsScreen = () => {
     </>
   );
 };
-
-function genreColor(name: string) {
-  switch (name.toLowerCase()) {
-    case "action":
-      return COLORS.teal;
-    case "thriller":
-      return COLORS.pink;
-    case "science":
-      return COLORS.purple;
-    case "fiction":
-      return COLORS.gold;
-    default:
-      return COLORS.gray;
-  }
-}
 
 const centeredModalStyles = StyleSheet.create({
   container: {
