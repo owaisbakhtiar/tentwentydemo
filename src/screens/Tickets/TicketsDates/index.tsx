@@ -104,6 +104,7 @@ const GetTicketsDatesScreen = () => {
 
       {/* Showtimes */}
       <ScrollView
+        horizontal
         // style={styles.hallsScrollStyle}
         contentContainerStyle={styles.hallsScrollStyle}
       >
@@ -123,14 +124,12 @@ const GetTicketsDatesScreen = () => {
               </View>
 
               <TouchableOpacity
-                // key={show.id}
                 style={[
                   styles.showtimeCard,
                   selectedShowtime === show.id && styles.showtimeCardSelected,
                 ]}
                 onPress={() => {
                   setSelectedShowtime(show.id);
-                  handleSelectSeats(show);
                 }}
                 activeOpacity={0.8}
               >

@@ -67,7 +67,6 @@ const styles = StyleSheet.create({
   hallsScrollStyle: {
     maxHeight: 250,
     marginTop: 20,
-    backgroundColor: "red",
   },
   showtimeCard: {
     width: width * 0.6,
