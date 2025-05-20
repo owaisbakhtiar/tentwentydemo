@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   sectionTitle: {
-    fontFamily: FONTS.bold,
+    fontFamily: FONTS.medium,
     fontSize: 18,
     color: COLORS.darkPurple,
   },
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
   },
   hallsScrollStyle: {
     maxHeight: 250,
-    marginTop: 20,
+    marginTop: 35,
   },
   showtimeCard: {
     width: width * 0.6,
