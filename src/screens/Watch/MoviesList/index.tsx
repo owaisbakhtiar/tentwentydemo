@@ -1,31 +1,38 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   View,
   Text,
   FlatList,
-  ImageBackground,
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import styles from "./style";
-import COLORS from "@constants/colors";
-import FONTS from "@constants/fonts";
-import { fetchUpcomingMovies } from "@services/movies";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { WatchStackParamList } from "@navigation/stacks/WatchStackNavigator";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState, AppDispatch } from "@src/store";
-import { setMovies, setLoading, setError } from "@src/store/moviesSlice";
+import { RootState } from "../../../store";
+import { Movie, setMovies, setLoading, setError } from "@src/store/moviesSlice";
 import Icon from "@src/components/Icon";
+import MovieCard from "@src/components/MovieCard";
+import styles from "./style";
+import COLORS from "@constants/colors";
+import { fetchUpcomingMovies } from "@services/movies";
+import FONTS from "@constants/fonts";
 
-const MovieListScreen = () => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<WatchStackParamList>>();
-  const dispatch = useDispatch<AppDispatch>();
-  const { allMovies, loading, error } = useSelector(
-    (state: RootState) => state.movies
-  );
+type WatchStackParamList = {
+  MovieDetails: { movieId: number };
+  SearchScreen: undefined;
+};
+
+type NavigationProp = NativeStackNavigationProp<WatchStackParamList>;
+
+const MoviesListScreen = () => {
+  const navigation = useNavigation<NavigationProp>();
+  const dispatch = useDispatch();
+  const {
+    allMovies: movies,
+    loading,
+    error,
+  } = useSelector((state: RootState) => state.movies);
 
   useEffect(() => {
     const loadMovies = async () => {
@@ -35,7 +42,7 @@ const MovieListScreen = () => {
         const data = await fetchUpcomingMovies();
         dispatch(setMovies(data));
       } catch (err: any) {
-        dispatch(setError("Failed to load movies. Please try again."));
+        dispatch(setError(err.message || "Failed to load movies"));
       } finally {
         dispatch(setLoading(false));
       }
@@ -47,19 +54,22 @@ const MovieListScreen = () => {
     navigation.navigate("MovieDetails", { movieId });
   };
 
+  const renderItem = useCallback(
+    ({ item }: { item: Movie }) => (
+      <MovieCard item={item} onPress={() => handleMoviePress(item.id)} />
+    ),
+    [handleMoviePress]
+  );
+
   return (
     <View style={styles.container}>
-      {/* Header  Search Bar  */}
       <View style={styles.headerRow}>
-        <Text style={styles.headerTitle}>Watch</Text>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("SearchScreen" as any)}
-        >
+        <Text style={styles.headerTitle}>Movies</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("SearchScreen")}>
           <Icon name="search" size={24} color={COLORS.darkPurple} />
         </TouchableOpacity>
       </View>
 
-      {/* Loading/Error State */}
       {loading ? (
         <ActivityIndicator
           size="large"
@@ -98,34 +108,16 @@ const MovieListScreen = () => {
         </View>
       ) : (
         <FlatList
-          data={allMovies}
+          data={movies}
+          renderItem={renderItem}
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={{ paddingVertical: 16 }}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() => handleMoviePress(item.id)}
-              activeOpacity={0.8}
-            >
-              <View style={styles.cardWrapper}>
-                <ImageBackground
-                  source={{
-                    uri: `https://image.tmdb.org/t/p/w500${item.backdrop_path}`,
-                  }}
-                  style={styles.cardImage}
-                  imageStyle={styles.cardImageStyle}
-                >
-                  <View style={styles.cardOverlay} />
-                  <Text style={styles.cardTitle}>{item.title}</Text>
-                </ImageBackground>
-              </View>
-            </TouchableOpacity>
-          )}
           ItemSeparatorComponent={() => <View style={{ height: 24 }} />}
+          showsVerticalScrollIndicator={false}
         />
       )}
     </View>
   );
 };
 
-export default MovieListScreen;
+export default MoviesListScreen;
