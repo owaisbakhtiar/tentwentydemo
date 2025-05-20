@@ -42,32 +42,6 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     marginRight: 12,
   },
-  cardWrapper: {
-    borderRadius: 20,
-    overflow: "hidden",
-  },
-  cardImage: {
-    height: 180,
-    justifyContent: "flex-end",
-  },
-  cardImageStyle: {
-    borderRadius: 20,
-  },
-  cardOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.15)",
-    borderRadius: 20,
-  },
-  cardTitle: {
-    color: COLORS.white,
-    fontSize: 22,
-    fontFamily: FONTS.medium,
-    margin: 16,
-    marginBottom: 20,
-    // textShadowColor: "rgba(0,0,0,0.3)",
-    // textShadowOffset: { width: 0, height: 2 },
-    // textShadowRadius: 6,
-  },
 });
 
 export default styles;
