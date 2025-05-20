@@ -8,6 +8,7 @@ const COLORS = {
   gray: "#bdbdbd",
   tabActive: "#222",
   tabInactive: "gray",
+  partialWhite: "#A6A6A61A",
 
   // App-specific colors
   darkPurple: "#2E2739",

@@ -5,6 +5,10 @@ import FONTS from "@constants/fonts";
 const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.lightBackground,
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -35,7 +39,7 @@ const styles = StyleSheet.create({
   },
   section: {
     paddingHorizontal: 16,
-    marginTop: 8,
+    marginTop: 50,
   },
   sectionTitle: {
     fontFamily: FONTS.bold,
@@ -46,7 +50,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 20,
     borderRadius: 16,
-    backgroundColor: COLORS.gray,
+    backgroundColor: COLORS.partialWhite,
     marginRight: 12,
   },
   dateBtnSelected: {
@@ -54,14 +58,20 @@ const styles = StyleSheet.create({
   },
   dateBtnText: {
     fontFamily: FONTS.medium,
-    fontSize: 16,
+    fontSize: 15,
     color: COLORS.darkPurple,
   },
   dateBtnTextSelected: {
     color: COLORS.white,
   },
+  hallsScrollStyle: {
+    // flex: 1,
+    marginTop: 20,
+    backgroundColor: "red",
+  },
   showtimeCard: {
-    width: width * 0.42,
+    width: width * 0.6,
+    height: 160,
     backgroundColor: COLORS.white,
     borderRadius: 16,
     borderWidth: 1,
@@ -78,21 +88,27 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 2,
   },
+  timeTitleCont: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
   showtimeTime: {
-    fontFamily: FONTS.bold,
+    fontFamily: FONTS.medium,
     fontSize: 16,
     color: COLORS.darkPurple,
-    marginBottom: 2,
+    // marginBottom: 2,
   },
   showtimeHall: {
-    fontFamily: FONTS.medium,
-    fontSize: 13,
+    fontFamily: FONTS.regular,
+    fontSize: 16,
     color: COLORS.gray,
-    marginBottom: 8,
+    marginLeft: 10,
+    // marginBottom: 8,
   },
   seatMapImg: {
     width: "100%",
-    height: 70,
+    height: "100%",
     marginBottom: 8,
   },
   priceText: {

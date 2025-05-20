@@ -10,7 +10,7 @@ import {
   Modal,
   StyleSheet,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { WatchStackParamList } from "@navigation/stacks/WatchStackNavigator";
@@ -139,7 +139,7 @@ const MovieDetailsScreen = () => {
               onPress={() => navigation.goBack()}
               style={styles.backBtn}
             >
-              <Ionicons name="arrow-back" size={28} color={COLORS.white} />
+              <AntDesign name="left" size={28} color={COLORS.white} />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>Watch</Text>
           </View>

@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: COLORS.darkPurple,
     textAlign: "center",
-    marginTop: 4,
+    marginTop: 10,
   },
   subTitle: {
     fontFamily: FONTS.medium,

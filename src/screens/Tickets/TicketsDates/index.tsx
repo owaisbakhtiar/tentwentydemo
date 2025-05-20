@@ -67,21 +67,9 @@ const GetTicketsDatesScreen = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
+    <SafeAreaView style={styles.container}>
       {/* Header */}
-      {/* <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backBtn}
-        >
-          <Ionicons name="arrow-back" size={24} color={COLORS.darkPurple} />
-        </TouchableOpacity>
-        <View style={{ flex: 1, alignItems: "center" }}>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.releaseDate}>In Theaters {releaseDate}</Text>
-        </View>
-        <View style={{ width: 40 }} />
-      </View> */}
+
       <TicketsHeader title={title} releaseDate={`In Theaters ${releaseDate}`} />
 
       {/* Date Selector */}
@@ -116,8 +104,8 @@ const GetTicketsDatesScreen = () => {
 
       {/* Showtimes */}
       <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 120 }}
+        style={styles.hallsScrollStyle}
+        // contentContainerStyle={{ paddingBottom: 120 }}
       >
         <View
           style={{
@@ -128,30 +116,35 @@ const GetTicketsDatesScreen = () => {
           }}
         >
           {mockShowtimes.map((show) => (
-            <TouchableOpacity
-              key={show.id}
-              style={[
-                styles.showtimeCard,
-                selectedShowtime === show.id && styles.showtimeCardSelected,
-              ]}
-              onPress={() => {
-                setSelectedShowtime(show.id);
-                handleSelectSeats(show);
-              }}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.showtimeTime}>{show.time}</Text>
-              <Text style={styles.showtimeHall}>{show.hall}</Text>
-              <Image
-                source={show.seatMap}
-                style={styles.seatMapImg}
-                resizeMode="contain"
-              />
+            <View key={show.id}>
+              <View style={styles.timeTitleCont}>
+                <Text style={styles.showtimeTime}>{show.time}</Text>
+                <Text style={styles.showtimeHall}>{show.hall}</Text>
+              </View>
+
+              <TouchableOpacity
+                // key={show.id}
+                style={[
+                  styles.showtimeCard,
+                  selectedShowtime === show.id && styles.showtimeCardSelected,
+                ]}
+                onPress={() => {
+                  setSelectedShowtime(show.id);
+                  handleSelectSeats(show);
+                }}
+                activeOpacity={0.8}
+              >
+                <Image
+                  source={show.seatMap}
+                  style={styles.seatMapImg}
+                  resizeMode="contain"
+                />
+              </TouchableOpacity>
               <Text style={styles.priceText}>
                 From <Text style={styles.priceBold}>${show.price}</Text> or{" "}
                 <Text style={styles.priceBold}>{show.bonus} bonus</Text>
               </Text>
-            </TouchableOpacity>
+            </View>
           ))}
         </View>
       </ScrollView>

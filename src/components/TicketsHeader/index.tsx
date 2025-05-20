@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, AntDesign } from "@expo/vector-icons";
 import COLORS from "@constants/colors";
 import { useNavigation } from "@react-navigation/native";
 import styles from "./style";
@@ -22,7 +22,7 @@ const TicketsHeader: React.FC<TicketsHeaderProps> = ({
         onPress={() => navigation.goBack()}
         style={styles.backBtn}
       >
-        <Ionicons name="arrow-back" size={24} color={COLORS.darkPurple} />
+        <AntDesign name="left" size={24} color={COLORS.darkPurple} />
       </TouchableOpacity>
       <View style={{ flex: 1, alignItems: "center" }}>
         <Text style={styles.title}>{title}</Text>
