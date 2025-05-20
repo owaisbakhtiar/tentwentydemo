@@ -9,10 +9,11 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../../store";
+import { RootState } from "@src/store";
 import { Movie, setMovies, setLoading, setError } from "@src/store/moviesSlice";
 import Icon from "@src/components/Icon";
 import MovieCard from "@src/components/MovieCard";
+import ErrorView from "@src/components/ErrorView";
 import styles from "./style";
 import COLORS from "@constants/colors";
 import { fetchUpcomingMovies } from "@services/movies";
@@ -77,35 +78,7 @@ const MoviesListScreen = () => {
           style={{ marginTop: 40 }}
         />
       ) : error ? (
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <TouchableOpacity
-            onPress={() => dispatch(setError(null))}
-            activeOpacity={0.7}
-          >
-            <Text
-              style={{
-                color: COLORS.pink,
-                textAlign: "center",
-                fontFamily: FONTS.medium,
-                fontSize: 16,
-              }}
-            >
-              {error}
-            </Text>
-            <Text
-              style={{
-                color: COLORS.skyBlue,
-                textAlign: "center",
-                marginTop: 8,
-                fontFamily: FONTS.medium,
-              }}
-            >
-              Tap to retry
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <ErrorView error={error} onRetry={() => dispatch(setError(null))} />
       ) : (
         <FlatList
           data={movies}
