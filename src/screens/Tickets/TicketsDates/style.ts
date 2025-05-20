@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     color: COLORS.white,
   },
   hallsScrollStyle: {
-    // flex: 1,
+    maxHeight: 250,
     marginTop: 20,
     backgroundColor: "red",
   },
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 0,
     right: 0,
-    bottom: 0,
+    bottom: 75,
     backgroundColor: COLORS.background,
     padding: 16,
     borderTopLeftRadius: 20,

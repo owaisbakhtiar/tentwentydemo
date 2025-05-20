@@ -67,7 +67,7 @@ const GetTicketsDatesScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* Header */}
 
       <TicketsHeader title={title} releaseDate={`In Theaters ${releaseDate}`} />
@@ -104,8 +104,8 @@ const GetTicketsDatesScreen = () => {
 
       {/* Showtimes */}
       <ScrollView
-        style={styles.hallsScrollStyle}
-        // contentContainerStyle={{ paddingBottom: 120 }}
+        // style={styles.hallsScrollStyle}
+        contentContainerStyle={styles.hallsScrollStyle}
       >
         <View
           style={{
@@ -159,7 +159,7 @@ const GetTicketsDatesScreen = () => {
           <Text style={styles.selectSeatsText}>Select Seats</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
