@@ -56,29 +56,14 @@ const MovieListScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
+      {/* Header  Search Bar  */}
       <View style={styles.headerRow}>
         <Text style={styles.headerTitle}>Watch</Text>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("SearchScreen" as any)}
+        >
           <Ionicons name="search" size={24} color={COLORS.darkPurple} />
         </TouchableOpacity>
-      </View>
-
-      {/* Search Bar */}
-      <View style={styles.searchBarWrapper}>
-        <Ionicons
-          name="search"
-          size={20}
-          color={COLORS.grayText}
-          style={{ marginLeft: 12 }}
-        />
-        <TextInput
-          style={styles.searchBar}
-          placeholder="Search"
-          placeholderTextColor={COLORS.grayText}
-          value={search}
-          onChangeText={setSearch}
-        />
       </View>
 
       {/* Loading/Error State */}
