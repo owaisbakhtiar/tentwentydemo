@@ -66,15 +66,15 @@ const styles = StyleSheet.create({
   },
   genrePill: {
     borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    marginRight: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 3,
+    marginRight: 4,
     marginBottom: 8,
   },
   genreText: {
     color: COLORS.white,
     fontFamily: FONTS.medium,
-    fontSize: 15,
+    fontSize: 14,
   },
 });
 
